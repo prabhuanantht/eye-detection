@@ -1,0 +1,5 @@
+names:
+  0: eye
+path: /Users/ananth/eye-detection-app/ml_pipeline/data
+train: images/train
+val: images/val

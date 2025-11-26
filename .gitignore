@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.env
+
+# Node
+node_modules/
+dist/
+.DS_Store
+
+# Eye Detection App
+backend/uploads/
+backend/serviceAccountKey.json
+ml_pipeline/runs/
+ml_pipeline/data/
+*.pt
+!ml_pipeline/yolov8n.pt

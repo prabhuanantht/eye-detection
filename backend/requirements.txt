@@ -1,0 +1,6 @@
+flask
+firebase-admin
+flask-cors
+ultralytics
+opencv-python
+numpy
