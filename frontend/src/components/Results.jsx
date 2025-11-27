@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Activity, Eye, CheckCircle2, AlertTriangle } from 'lucide-react';
+import { Activity, Eye, Trash2, RefreshCw } from 'lucide-react';
 
 export default function Results({ refreshTrigger, onSelect }) {
     const [results, setResults] = useState([]);
@@ -21,24 +21,64 @@ export default function Results({ refreshTrigger, onSelect }) {
         }
     };
 
+    const clearHistory = async () => {
+        if (!window.confirm('Are you sure you want to clear all history?')) return;
+        try {
+            await axios.delete('/api/results');
+            fetchResults();
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    const deleteItem = async (e, id) => {
+        e.stopPropagation();
+        if (!window.confirm('Delete this analysis?')) return;
+        try {
+            await axios.delete(`/api/results/${id}`);
+            fetchResults();
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
     if (loading && results.length === 0) {
         return <div className="text-slate-400 text-center p-8">Loading history...</div>;
     }
 
     return (
         <div className="space-y-4">
-            <h2 className="text-xl font-semibold flex items-center gap-2">
-                <Activity className="w-5 h-5 text-emerald-400" />
-                Recent Analysis
-            </h2>
+            <div className="flex justify-between items-center">
+                <h2 className="text-xl font-semibold flex items-center gap-2">
+                    <Activity className="w-5 h-5 text-emerald-400" />
+                    Recent Analysis
+                </h2>
+                {results.length > 0 && (
+                    <button
+                        onClick={clearHistory}
+                        className="text-xs flex items-center gap-1 text-slate-400 hover:text-red-400 transition-colors"
+                    >
+                        <Trash2 className="w-3 h-3" />
+                        Clear History
+                    </button>
+                )}
+            </div>
 
             <div className="grid gap-4">
                 {results.map((item) => (
                     <div
                         key={item.id}
                         onClick={() => onSelect(item)}
-                        className="bg-slate-800 rounded-xl overflow-hidden border border-slate-700 hover:border-emerald-500/50 hover:bg-slate-800/80 transition-all cursor-pointer group"
+                        className="bg-slate-800 rounded-xl overflow-hidden border border-slate-700 hover:border-emerald-500/50 hover:bg-slate-800/80 transition-all cursor-pointer group relative"
                     >
+                        <button
+                            onClick={(e) => deleteItem(e, item.id)}
+                            className="absolute top-2 right-2 p-2 bg-black/50 hover:bg-red-500/80 rounded-full text-white opacity-0 group-hover:opacity-100 transition-all z-10"
+                            title="Delete"
+                        >
+                            <Trash2 className="w-3 h-3" />
+                        </button>
+
                         <div className="p-4 flex gap-4 items-start">
                             {/* Image Preview */}
                             <div className="w-24 h-24 bg-slate-900 rounded-lg flex-shrink-0 overflow-hidden border border-slate-700 relative">

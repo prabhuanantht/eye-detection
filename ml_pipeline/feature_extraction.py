@@ -51,7 +51,7 @@ class EyeAnalyzer:
                 })
         
         # Feature 3: Symmetry (Simple comparison if 2 eyes detected)
-        symmetry_score = 1.0
+        symmetry_score = None
         if len(features) == 2:
             # Sort by x coordinate to distinguish left/right
             features.sort(key=lambda x: x['bbox'][0])

@@ -11,8 +11,9 @@ def init_firebase():
             print("Firebase initialized successfully.")
             return firestore.client()
         else:
-            print("WARNING: serviceAccountKey.json not found or invalid. Firebase features will be disabled/mocked.")
+            print("WARNING: serviceAccountKey.json not found or invalid.")
             return None
+    return firestore.client()
 
 def save_result(db, data):
     if db:
@@ -39,8 +40,18 @@ def get_results(db):
                 data['timestamp'] = data['timestamp'].isoformat()
             results.append(data)
         return results
-    else:
-        return [
-            {'id': 'mock_1', 'timestamp': '2023-10-27T10:00:00', 'eye_count': 2, 'symmetry_score': 0.95},
-            {'id': 'mock_2', 'timestamp': '2023-10-26T09:30:00', 'eye_count': 1, 'symmetry_score': 0.0}
-        ]
+    return []
+
+def delete_document(db, doc_id):
+    if db:
+        db.collection('eye_analysis').document(doc_id).delete()
+        return True
+    return False
+
+def delete_all_documents(db):
+    if db:
+        docs = db.collection('eye_analysis').stream()
+        for doc in docs:
+            doc.reference.delete()
+        return True
+    return False

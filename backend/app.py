@@ -8,7 +8,7 @@ import cv2
 # Add ml_pipeline to path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from ml_pipeline.feature_extraction import EyeAnalyzer
-from backend.firebase_utils import init_firebase, save_result, get_results
+from backend.firebase_utils import init_firebase, save_result, get_results, delete_document, delete_all_documents
 
 app = Flask(__name__)
 CORS(app)
@@ -16,7 +16,7 @@ CORS(app)
 # Initialize
 db = init_firebase()
 # Initialize Analyzer (will use fallback if no model trained yet)
-analyzer = EyeAnalyzer(os.path.join(os.path.dirname(__file__), '../ml_pipeline/runs/detect/eye_model/weights/best.pt'))
+analyzer = EyeAnalyzer(os.path.join(os.path.dirname(__file__), '../ml_pipeline/runs/detect/eye_model3/weights/best.pt'))
 
 UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), 'uploads')
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -43,9 +43,7 @@ def analyze():
         for feature in result['features']:
             bbox = feature['bbox']
             x1, y1, x2, y2 = int(bbox[0]), int(bbox[1]), int(bbox[2]), int(bbox[3])
-            # Draw rectangle (Green, thickness 2)
             cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
-            # Add label
             label = f"Eye: {int(feature['confidence']*100)}%"
             cv2.putText(img, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
             
@@ -66,14 +64,28 @@ def analyze():
         print(f"Error analyzing image: {e}")
         return jsonify({'error': str(e)}), 500
 
+@app.route('/api/uploads/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(UPLOAD_FOLDER, filename)
+
 @app.route('/api/results', methods=['GET'])
 def list_results():
     results = get_results(db)
     return jsonify(results)
 
-@app.route('/api/uploads/<filename>')
-def uploaded_file(filename):
-    return send_from_directory(UPLOAD_FOLDER, filename)
+@app.route('/api/results', methods=['DELETE'])
+def clear_history():
+    success = delete_all_documents(db)
+    if success:
+        return jsonify({'message': 'History cleared'})
+    return jsonify({'error': 'Failed to clear history'}), 500
+
+@app.route('/api/results/<id>', methods=['DELETE'])
+def delete_item(id):
+    success = delete_document(db, id)
+    if success:
+        return jsonify({'message': 'Item deleted'})
+    return jsonify({'error': 'Failed to delete item'}), 500
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

@@ -15,5 +15,8 @@ backend/uploads/
 backend/serviceAccountKey.json
 ml_pipeline/runs/
 ml_pipeline/data/
+ml_pipeline/helen_dataset/
+*.zip
 *.pt
 !ml_pipeline/yolov8n.pt
+!ml_pipeline/runs/detect/eye_model3/weights/best.pt
