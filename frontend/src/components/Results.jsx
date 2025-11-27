@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Activity, Eye, CheckCircle2, AlertTriangle } from 'lucide-react';
 
-export default function Results({ refreshTrigger }) {
+export default function Results({ refreshTrigger, onSelect }) {
     const [results, setResults] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -34,22 +34,27 @@ export default function Results({ refreshTrigger }) {
 
             <div className="grid gap-4">
                 {results.map((item) => (
-                    <div key={item.id} className="bg-slate-800 rounded-xl overflow-hidden border border-slate-700 hover:border-slate-600 transition-colors">
+                    <div
+                        key={item.id}
+                        onClick={() => onSelect(item)}
+                        className="bg-slate-800 rounded-xl overflow-hidden border border-slate-700 hover:border-emerald-500/50 hover:bg-slate-800/80 transition-all cursor-pointer group"
+                    >
                         <div className="p-4 flex gap-4 items-start">
                             {/* Image Preview */}
-                            <div className="w-24 h-24 bg-slate-900 rounded-lg flex-shrink-0 overflow-hidden border border-slate-700">
+                            <div className="w-24 h-24 bg-slate-900 rounded-lg flex-shrink-0 overflow-hidden border border-slate-700 relative">
                                 <img
-                                    src={`/api/uploads/${item.filename}`}
+                                    src={`/api/uploads/${item.marked_filename || item.filename}`}
                                     alt="Analysis"
-                                    className="w-full h-full object-cover"
+                                    className="w-full h-full object-cover transition-transform group-hover:scale-110"
                                     onError={(e) => { e.target.style.display = 'none' }}
                                 />
+                                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
                             </div>
 
                             {/* Content */}
                             <div className="flex-1 min-w-0">
                                 <div className="flex justify-between items-start mb-2">
-                                    <h3 className="font-medium text-slate-200 truncate pr-4">
+                                    <h3 className="font-medium text-slate-200 truncate pr-4 group-hover:text-emerald-400 transition-colors">
                                         {item.filename?.split('_').slice(1).join('_') || 'Unknown Image'}
                                     </h3>
                                     <span className="text-xs text-slate-500 whitespace-nowrap">
@@ -58,16 +63,16 @@ export default function Results({ refreshTrigger }) {
                                 </div>
 
                                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-3">
-                                    <Stat label="Eyes Detected" value={item.eye_count} />
+                                    <Stat label="Eyes" value={item.eye_count} />
                                     <Stat label="Symmetry" value={item.symmetry_score ? (item.symmetry_score * 100).toFixed(1) + '%' : 'N/A'} />
                                     <Stat
-                                        label="Avg Openness"
+                                        label="Openness"
                                         value={item.features?.length
                                             ? (item.features.reduce((acc, curr) => acc + curr.openness, 0) / item.features.length).toFixed(2)
                                             : '0.00'}
                                     />
                                     <Stat
-                                        label="Avg Brightness"
+                                        label="Brightness"
                                         value={item.features?.length
                                             ? (item.features.reduce((acc, curr) => acc + curr.brightness, 0) / item.features.length).toFixed(0)
                                             : '0'}
@@ -75,18 +80,6 @@ export default function Results({ refreshTrigger }) {
                                 </div>
                             </div>
                         </div>
-
-                        {/* Detailed Features (Collapsible or just listed) */}
-                        {item.features && item.features.length > 0 && (
-                            <div className="bg-slate-900/50 px-4 py-3 border-t border-slate-700/50 text-xs text-slate-400 flex gap-4 overflow-x-auto">
-                                {item.features.map((eye, idx) => (
-                                    <div key={idx} className="flex items-center gap-2">
-                                        <Eye className="w-3 h-3" />
-                                        <span>Eye {idx + 1}: Conf {(eye.confidence * 100).toFixed(0)}%</span>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
                     </div>
                 ))}
 

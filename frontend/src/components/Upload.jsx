@@ -19,8 +19,9 @@ export default function Upload({ onUploadSuccess }) {
         try {
             await axios.post('/api/analyze', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
+            }).then(res => {
+                onUploadSuccess(res.data);
             });
-            onUploadSuccess();
         } catch (err) {
             console.error(err);
             setError(err.response?.data?.error || 'Failed to upload image');

@@ -1,12 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Upload from './components/Upload';
 import Results from './components/Results';
+import AnalysisView from './components/AnalysisView';
+import Modal from './components/Modal';
 import { Eye } from 'lucide-react';
 
 function App() {
     const [refreshTrigger, setRefreshTrigger] = useState(0);
+    const [currentResult, setCurrentResult] = useState(null);
+    const [selectedResult, setSelectedResult] = useState(null);
 
-    const handleUploadSuccess = () => {
+    const handleUploadSuccess = (result) => {
+        setCurrentResult(result);
         setRefreshTrigger(prev => prev + 1);
     };
 
@@ -23,14 +28,32 @@ function App() {
                     </div>
                 </header>
 
-                <main className="grid gap-8 md:grid-cols-[350px_1fr]">
-                    <aside>
-                        <Upload onUploadSuccess={handleUploadSuccess} />
-                    </aside>
-                    <section>
-                        <Results refreshTrigger={refreshTrigger} />
+                <main className="space-y-12">
+                    {/* Top Section: Upload or Current Analysis */}
+                    <section className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                        {currentResult ? (
+                            <AnalysisView
+                                result={currentResult}
+                                onReset={() => setCurrentResult(null)}
+                            />
+                        ) : (
+                            <Upload onUploadSuccess={handleUploadSuccess} />
+                        )}
+                    </section>
+
+                    {/* Bottom Section: History */}
+                    <section className="border-t border-slate-800 pt-8">
+                        <Results
+                            refreshTrigger={refreshTrigger}
+                            onSelect={setSelectedResult}
+                        />
                     </section>
                 </main>
+
+                {/* Modal for History Items */}
+                <Modal isOpen={!!selectedResult} onClose={() => setSelectedResult(null)}>
+                    <AnalysisView result={selectedResult} />
+                </Modal>
             </div>
         </div>
     );

@@ -3,6 +3,7 @@ from flask_cors import CORS
 import os
 import sys
 import uuid
+import cv2
 
 # Add ml_pipeline to path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -37,8 +38,24 @@ def analyze():
         # Run analysis
         result = analyzer.analyze_image(filepath)
         
+        # Draw bounding boxes
+        img = cv2.imread(filepath)
+        for feature in result['features']:
+            bbox = feature['bbox']
+            x1, y1, x2, y2 = int(bbox[0]), int(bbox[1]), int(bbox[2]), int(bbox[3])
+            # Draw rectangle (Green, thickness 2)
+            cv2.rectangle(img, (x1, y1), (x2, y2), (0, 255, 0), 2)
+            # Add label
+            label = f"Eye: {int(feature['confidence']*100)}%"
+            cv2.putText(img, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+            
+        marked_filename = f"marked_{filename}"
+        marked_filepath = os.path.join(UPLOAD_FOLDER, marked_filename)
+        cv2.imwrite(marked_filepath, img)
+        
         # Add metadata
         result['filename'] = filename
+        result['marked_filename'] = marked_filename
         
         # Save to DB
         doc_id = save_result(db, result)
