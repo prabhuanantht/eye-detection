@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import { Upload as UploadIcon, Loader2, AlertCircle, Camera, X, RefreshCw } from 'lucide-react';
-import API_BASE_URL from '../config';
 
 export default function Upload({ onUploadSuccess }) {
     const [mode, setMode] = useState('upload'); // 'upload' | 'camera'
@@ -90,7 +89,7 @@ export default function Upload({ onUploadSuccess }) {
         formData.append('image', file);
 
         try {
-            await axios.post(`${API_BASE_URL}/analyze`, formData, {
+            await axios.post('/api/analyze', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             }).then(res => {
                 onUploadSuccess(res.data);

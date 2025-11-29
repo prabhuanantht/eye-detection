@@ -3,5 +3,4 @@ firebase-admin
 flask-cors
 ultralytics
 opencv-python
-gunicorn
 numpy

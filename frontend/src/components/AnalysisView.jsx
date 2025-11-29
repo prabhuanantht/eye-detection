@@ -1,14 +1,11 @@
-```javascript
 import React from 'react';
-import { ArrowLeft, Eye, Maximize2, Sun, AlertCircle } from 'lucide-react';
-import API_BASE_URL from '../config';
+import { Eye, Activity, RotateCcw } from 'lucide-react';
 
 export default function AnalysisView({ result, onReset }) {
     if (!result) return null;
 
     // Use marked_filename if available, otherwise fallback to original
     const imageFilename = result.marked_filename || result.filename;
-    const imageSrc = result.marked_url || result.url || `${ API_BASE_URL } /uploads/${ imageFilename } `;
 
     return (
         <div className="space-y-6">
@@ -33,7 +30,7 @@ export default function AnalysisView({ result, onReset }) {
                 {/* Main Image */}
                 <div className="bg-black rounded-xl overflow-hidden border border-slate-700 shadow-lg aspect-video flex items-center justify-center">
                     <img
-                        src={`/ api / uploads / ${ imageFilename } `}
+                        src={`/api/uploads/${imageFilename}`}
                         alt="Analyzed Face"
                         className="max-w-full max-h-full object-contain"
                     />
@@ -81,9 +78,9 @@ export default function AnalysisView({ result, onReset }) {
 
 function StatCard({ label, value, highlight }) {
     return (
-        <div className={`p - 4 rounded - xl border ${ highlight ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-slate-800 border-slate-700' } `}>
+        <div className={`p-4 rounded-xl border ${highlight ? 'bg-emerald-500/10 border-emerald-500/20' : 'bg-slate-800 border-slate-700'}`}>
             <p className="text-sm text-slate-400 mb-1">{label}</p>
-            <p className={`text - 2xl font - bold ${ highlight ? 'text-emerald-400' : 'text-white' } `}>{value}</p>
+            <p className={`text-2xl font-bold ${highlight ? 'text-emerald-400' : 'text-white'}`}>{value}</p>
         </div>
     );
 }
