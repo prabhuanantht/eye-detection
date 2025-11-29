@@ -129,3 +129,14 @@ You need to run both the backend and frontend servers simultaneously.
 -   **Firebase Error**: Ensure `serviceAccountKey.json` is valid and in the correct `backend/` folder.
 -   **Model Not Found**: The backend expects the trained model at `../ml_pipeline/runs/detect/eye_model/weights/best.pt`. If running for the first time without training, you might need to adjust the path or train a model first.
 -   **CORS Issues**: The frontend is configured to proxy `/api` requests to `http://127.0.0.1:5000`. Ensure the backend is running on port 5000.
+
+## Model Limitations
+
+The current eye detection model is trained on the **Helen Dataset**, which primarily consists of high-quality, centered, full-face portraits. As a result, the model has the following known limitations:
+
+1.  **Partial Faces**: The model relies on "face context" (nose, mouth, chin) to confirm the presence of eyes. It may fail to detect eyes in images containing only a part of the face (e.g., top half only).
+2.  **Multiple Faces / Crowds**: The model is optimized for single-subject portraits. It may struggle to detect all eyes in group photos or crowd shots where faces are small or scattered.
+3.  **Distance**: Eyes in faces that are far away or very small in the frame may not be detected.
+4.  **Occlusions**: Heavy occlusion (sunglasses, hair covering eyes) may prevent detection.
+
+**Note**: These limitations are due to the specific nature of the training data. Retraining with a more diverse dataset (like WIDER Face) or using aggressive data augmentation (Mosaic, Random Crop) can improve robustness in these scenarios.
