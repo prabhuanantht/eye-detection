@@ -21,4 +21,4 @@ ml_pipeline/helen_dataset/
 *.zip
 *.pt
 !ml_pipeline/yolov8n.pt
-!ml_pipeline/runs/detect/eye_model3/weights/best.pt
+!backend/models/best.pt

@@ -16,7 +16,7 @@ CORS(app)
 # Initialize
 db = init_firebase()
 # Initialize Analyzer (will use fallback if no model trained yet)
-analyzer = EyeAnalyzer(os.path.join(os.path.dirname(__file__), '../ml_pipeline/runs/detect/eye_model3/weights/best.pt'))
+analyzer = EyeAnalyzer(os.path.join(os.path.dirname(__file__), 'models/best.pt'))
 
 UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), 'uploads')
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
