@@ -21,7 +21,7 @@ Before running the application, ensure you have the following installed:
 ### 1. Clone the Repository
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/prabhuanantht/eye-detection.git
 cd eye-detection-app
 ```
 
