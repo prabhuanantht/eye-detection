@@ -1,3 +1,7 @@
+### Note: Didn't keep the backend deployment running as it consumes significant resources. But it Works!!!
+
+---
+
 # Eye Detection Full-Stack App
 
 A complete full-stack application that detects eye regions from face images using a trained YOLOv8 model, extracts features (shape, symmetry, openness, brightness), and presents results through a modern web interface.
