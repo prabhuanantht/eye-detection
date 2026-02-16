@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify, send_from_directory
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 import os
 import sys
 import uuid
@@ -11,7 +11,9 @@ from ml_pipeline.feature_extraction import EyeAnalyzer
 from backend.firebase_utils import init_firebase, save_result, get_results, delete_document, delete_all_documents
 
 app = Flask(__name__)
-CORS(app)
+# Enable CORS explicitly for all /api/* routes so frontend on a different origin
+# (e.g. Vite dev server at http://localhost:5173) can call the backend.
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 # Initialize
 db = init_firebase()
@@ -22,6 +24,7 @@ UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), 'uploads')
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 @app.route('/api/analyze', methods=['POST'])
+@cross_origin()
 def analyze():
     if 'image' not in request.files:
         return jsonify({'error': 'No image uploaded'}), 400
@@ -65,15 +68,18 @@ def analyze():
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/uploads/<filename>')
+@cross_origin()
 def uploaded_file(filename):
     return send_from_directory(UPLOAD_FOLDER, filename)
 
 @app.route('/api/results', methods=['GET'])
+@cross_origin()
 def list_results():
     results = get_results(db)
     return jsonify(results)
 
 @app.route('/api/results', methods=['DELETE'])
+@cross_origin()
 def clear_history():
     success = delete_all_documents(db)
     if success:
@@ -81,6 +87,7 @@ def clear_history():
     return jsonify({'error': 'Failed to clear history'}), 500
 
 @app.route('/api/results/<id>', methods=['DELETE'])
+@cross_origin()
 def delete_item(id):
     success = delete_document(db, id)
     if success:
