@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import axios from 'axios';
+import { apiClient } from '../apiClient';
 import { Upload as UploadIcon, Loader2, AlertCircle, Camera, X, RefreshCw } from 'lucide-react';
 
 export default function Upload({ onUploadSuccess }) {
@@ -89,16 +89,15 @@ export default function Upload({ onUploadSuccess }) {
         formData.append('image', file);
 
         try {
-            await axios.post('/api/analyze', formData, {
+            const res = await apiClient.post('/api/analyze', formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
-            }).then(res => {
-                onUploadSuccess(res.data);
-                // Reset state after success
-                if (mode === 'camera') {
-                    setCapturedImage(null);
-                    startCamera();
-                }
             });
+            onUploadSuccess(res.data);
+            // Reset state after success
+            if (mode === 'camera') {
+                setCapturedImage(null);
+                startCamera();
+            }
         } catch (err) {
             console.error(err);
             setError(err.response?.data?.error || 'Failed to upload image');

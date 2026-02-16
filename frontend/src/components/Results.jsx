@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import { apiClient } from '../apiClient';
 import { Activity, Eye, Trash2, RefreshCw } from 'lucide-react';
 
 export default function Results({ refreshTrigger, onSelect }) {
@@ -12,7 +12,7 @@ export default function Results({ refreshTrigger, onSelect }) {
 
     const fetchResults = async () => {
         try {
-            const res = await axios.get('/api/results');
+            const res = await apiClient.get('/api/results');
             setResults(res.data);
         } catch (err) {
             console.error(err);
@@ -24,7 +24,7 @@ export default function Results({ refreshTrigger, onSelect }) {
     const clearHistory = async () => {
         if (!window.confirm('Are you sure you want to clear all history?')) return;
         try {
-            await axios.delete('/api/results');
+            await apiClient.delete('/api/results');
             fetchResults();
         } catch (err) {
             console.error(err);
@@ -35,7 +35,7 @@ export default function Results({ refreshTrigger, onSelect }) {
         e.stopPropagation();
         if (!window.confirm('Delete this analysis?')) return;
         try {
-            await axios.delete(`/api/results/${id}`);
+            await apiClient.delete(`/api/results/${id}`);
             fetchResults();
         } catch (err) {
             console.error(err);
