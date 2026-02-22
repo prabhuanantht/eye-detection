@@ -1,4 +1,4 @@
-### Note: Didn't keep the backend deployment running as it consumes significant resources. But it Works!!!
+### Note: Didn't keep the backend deployment running as it consumes significant resources.
 
 ---
 
